@@ -7,10 +7,6 @@
     {
       "path": "Bug-Log",
       "name": "server"
-    },
-    {
-      "name": "Bug-Log",
-      "path": "."
     }
   ],
   "settings": {
@@ -38,6 +34,7 @@
     "eslint.codeActionsOnSave.mode": "all",
     "editor.codeActionsOnSave": {
       "source.fixAll": true
-    }
+    },
+    "cSpell.words": ["virtuals"]
   }
 }

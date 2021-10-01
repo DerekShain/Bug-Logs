@@ -12,7 +12,7 @@ export const TrackedBugSchema = new Schema(
 TrackedBugSchema.virtual('tracker', {
   localField: 'accountId',
   foreignField: '_id',
-  ref: 'Tracker',
+  ref: 'Account',
   justOne: true
 })
 
