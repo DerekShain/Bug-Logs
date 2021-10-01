@@ -1,16 +1,14 @@
-
-  {
-    "name": "bug-log",
-    "version": "1.0.0",
-    "scripts": {
-      "build": "npm run setup:server",
-      "setup:app": "npm run setup:server && npm run setup:client",
-      "setup:client": "cd Bug-Log.client && npm i",
-      "setup:server": "cd Bug-Log && npm i",
-      "start": "node Bug-Log/index.js"
-    },
-    "engines": {
-      "node": "^14.17.0"
-    }
+{
+  "name": "bug-log",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm run setup:server",
+    "setup:app": "npm run setup:server && npm run setup:client",
+    "setup:client": "cd Bug-Log.client && npm i",
+    "setup:server": "cd Bug-Log && npm i",
+    "start": "node Bug-Log/index.js"
+  },
+  "engines": {
+    "node": "^14.17.0"
   }
-  
+}

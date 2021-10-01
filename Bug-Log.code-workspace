@@ -35,6 +35,6 @@
     "editor.codeActionsOnSave": {
       "source.fixAll": true
     },
-    "cSpell.words": ["virtuals"]
+    "cSpell.words": ["bugnote", "trackedbugs", "virtuals"]
   }
 }

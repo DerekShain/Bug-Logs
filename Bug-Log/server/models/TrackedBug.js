@@ -1,10 +1,9 @@
-import mongoose from 'mongoose'
-const Schema = mongoose.Schema
+import { Schema } from 'mongoose'
 
 export const TrackedBugSchema = new Schema(
   {
     bugId: { type: Schema.Types.ObjectId, ref: 'Bug', required: true },
-    accountId: { type: Schema.Types.ObjectId, ref: 'Tracker', required: true }
+    accountId: { type: Schema.Types.ObjectId, ref: 'Account', required: true }
   },
   { timestamps: true, toJSON: { virtuals: true } }
 )
