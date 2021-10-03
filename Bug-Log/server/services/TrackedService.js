@@ -9,7 +9,7 @@ class TrackedService {
       await trackBug.populate('bug')
       return trackBug
     } else {
-      throw new BadRequest('Bug')
+      throw new BadRequest('Bug error')
     }
   }
 
