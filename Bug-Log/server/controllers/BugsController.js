@@ -2,19 +2,20 @@ import { Auth0Provider } from '@bcwdev/auth0provider'
 import BaseController from '../utils/BaseController'
 import { bugsService } from '../services/BugsService'
 import { logger } from '../utils/Logger'
+import { trackedService } from '../services/TrackedService'
 export class BugsController extends BaseController {
   constructor() {
     super('api/bugs')
     this.router
       .get('', this.getBugs)
-      .get('/:id', this.getBug)
+      .get('/:bugId', this.getBug)
+      .get('/:bugId/notes', this.bugNote)
       .use(Auth0Provider.getAuthorizedUserInfo)
+      .get('/:bugId/trackedbugs', this.trackedBugs)
       .post('', this.createBug)
-      .get('/:id/notes', this.bugNote)
-      .get('/:id/trackedbugs', this.trackedBugs)
-      .put('/:id', this.editBug)
+      .put('/:bugId', this.editBug)
       // NOTE this needs to be a soft delete.
-      .delete('/:id', this.deleteBug)
+      .delete('/:bugId', this.deleteBug)
   }
 
   async getBugs(req, res, next) {
@@ -29,7 +30,7 @@ export class BugsController extends BaseController {
 
   async getBug(req, res, next) {
     try {
-      const bug = await bugsService.getBugById(req.params.id)
+      const bug = await bugsService.getBugById(req.params.bugId)
       res.send(bug)
     } catch (error) {
       next(error)
@@ -51,7 +52,7 @@ export class BugsController extends BaseController {
 
   async bugNote(req, res, next) {
     try {
-      const bugNote = await bugsService.getBugNoteById(req.params.id)
+      const bugNote = await bugsService.getBugNoteById(req.params.bugId)
       res.send(bugNote)
     } catch (error) {
       next(error)
@@ -61,8 +62,7 @@ export class BugsController extends BaseController {
 
   async trackedBugs(req, res, next) {
     try {
-      const trackedBugs = await bugsService.getTrackedBugsById(req.params.id)
-      res.send(trackedBugs)
+      res.send(await trackedService.getTrackedBugsById(req.params.bugId))
     } catch (error) {
       next(error)
       logger.error('trackedBugs controller Error', error)
@@ -71,7 +71,7 @@ export class BugsController extends BaseController {
 
   async editBug(req, res, next) {
     try {
-      const editBug = await bugsService.editBug(req.params.id, req.userInfo.id, req.body)
+      const editBug = await bugsService.editBug(req.params.bugId, req.userInfo.id, req.body)
       res.send(editBug)
     } catch (error) {
       next(error)
@@ -81,10 +81,12 @@ export class BugsController extends BaseController {
 
   async deleteBug(req, res, next) {
     try {
-      const bug = await bugsService.deleteBug(req.params.id, req.userInfo.id)
+      logger.log('Delete Bug', req.userInfo)
+      const bug = await bugsService.deleteBug(req.params.bugId, req.userInfo.id)
       res.send(bug)
     } catch (error) {
       next(error)
+      logger.error('deleteBug Error', error)
     }
   }
 }

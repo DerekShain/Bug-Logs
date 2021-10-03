@@ -8,16 +8,15 @@ export const TrackedBugSchema = new Schema(
   { timestamps: true, toJSON: { virtuals: true } }
 )
 
-TrackedBugSchema.virtual('tracker', {
-  localField: 'accountId',
-  foreignField: '_id',
-  ref: 'Account',
-  justOne: true
-})
-
 TrackedBugSchema.virtual('bug', {
   localField: 'bugId',
   foreignField: '_id',
   ref: 'Bug',
+  justOne: true
+})
+TrackedBugSchema.virtual('tracker', {
+  localField: 'accountId',
+  foreignField: '_id',
+  ref: 'Account',
   justOne: true
 })
