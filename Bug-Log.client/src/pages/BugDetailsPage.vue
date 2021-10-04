@@ -1,5 +1,5 @@
 <template>
-  <div class="row d-flex m-2 ">
+  <div class="row d-flex m-2 " v-if="bug.id">
     <div class="col-6">
       <div class="card">
         <div class="col card-header titleheader">
@@ -68,7 +68,7 @@
         <h2 class="card-header">
           Notes
         </h2>
-        <button type="button" class="btn btn-primary m-1 text-center" data-bs-toggle="modal" data-bs-target="#note-modal">
+        <button type="button" class="btn btn-primary m-1 text-center" data-bs-toggle="modal" :data-bs-target="'#note-modal-'+bug.id">
           Add Note
         </button>
         <div class="card-body">
@@ -77,12 +77,12 @@
       </div>
     </div>
   </div>
-  <Modal id="note-modal">
+  <Modal :id="'note-modal-'+bug.id">
     <template #modal-title>
       Create Note
     </template>
     <template #modal-body>
-      <NoteForm />
+      <NoteForm :bug="bug" />
     </template>
   </Modal>
 </template>
@@ -93,20 +93,23 @@ import { AppState } from '../AppState'
 import { useRoute } from 'vue-router'
 import { bugsService } from '../services/BugsService'
 import { notesService } from '../services/NotesService'
+import { logger } from '../utils/Logger'
 export default {
+
   setup() {
     const route = useRoute()
     onMounted(() => {
-      if (route.params.bugId) {
+      if (route.params.bugId || route.params.noteId) {
         bugsService.getBugById(route.params.bugId)
-        notesService.getNoteById(route.params.noteId)
-        notesService.getNoteByBugId(route.params.noteId)
+        // notesService.getNoteById(route.params.noteId)
+        notesService.getNoteByBugId(route.params.bugId)
       }
     })
     return {
       bug: computed(() => AppState.bug),
       bugs: computed(() => AppState.bugs),
       notes: computed(() => AppState.notes),
+      note: computed(() => AppState.note),
       account: computed(() => AppState.account)
     }
   }

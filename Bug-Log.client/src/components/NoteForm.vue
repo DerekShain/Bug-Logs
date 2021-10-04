@@ -19,17 +19,21 @@ import Pop from '../utils/Pop'
 import { logger } from '../utils/Logger'
 import { Modal } from 'bootstrap'
 import { notesService } from '../services/NotesService'
+import { useRoute } from 'vue-router'
 export default {
   setup() {
     const editable = ref({})
+    const route = useRoute()
     return {
       editable,
+      route,
       async createNote() {
         try {
+          editable.value.bugId = route.params.bugId
           await notesService.createNote(editable.value)
           editable.value = {}
-          Pop.toast('Bug Initialized', 'success')
-          const modal = Modal.getInstance(document.getElementById('note-modal'))
+          Pop.toast('Note Created', 'success')
+          const modal = Modal.getInstance(document.getElementById('note-modal-' + route.params.bugId))
           modal.hide()
         } catch (error) {
           Pop.toast(error.message, 'error')

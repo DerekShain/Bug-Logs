@@ -1,26 +1,33 @@
 import { AppState } from '../AppState'
 import { Note } from '../models/Note'
+import { logger } from '../utils/Logger'
 import { api } from './AxiosService'
 
 class NotesService {
   async getNotes() {
-    const res = await api.get('api/notes/')
+    AppState.notes = []
+    const res = await api.get('api/notes')
     AppState.notes = res.data.map(b => new Note(b))
   }
 
-  async getNoteById(bugId, noteId) {
-    const res = await api.get(`api/bugs/${bugId}/notes/${noteId}`)
+  async getNoteById(noteId, note) {
+    // debugger
+    const res = await api.get(`api/notes/${noteId}`, note)
     AppState.note = new Note(res.data)
+    logger.log('getNoteById', res.data)
   }
 
-  async getNoteByBugId(bugId, noteId) {
-    const res = await api.get(`api/bugs/${bugId}/notes/${noteId}`)
-    AppState.note = new Note(res.data)
+  async getNoteByBugId(bugId) {
+    const res = await api.get(`api/bugs/${bugId}/notes`)
+    AppState.notes = res.data.map(n => new Note(n))
+    logger.log('notebybugid', res.data)
   }
 
   async createNote(note) {
+    // debugger
     const res = await api.post('api/notes', note)
     AppState.notes.push(new Note(res.data))
+    // this.getNotes(noteId.bug)
     return res.data.id
   }
 
