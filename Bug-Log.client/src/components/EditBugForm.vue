@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="createBug">
+  <form @submit="createBug">
     <input class="form-control" type="text" placeholder="Title" aria-label="default input example" v-model="editable.title"><br />
     <input class="form-control"
            type="number"
@@ -30,29 +30,34 @@ import { logger } from '../utils/Logger'
 import { Modal } from 'bootstrap'
 import { router } from '../router'
 import { useRoute } from 'vue-router'
+import { watchEffect } from '@vue/runtime-core'
+import { Bug } from '../models/Bug'
 export default {
-  setup() {
+  props: {
+    bug: {
+      type: Bug,
+      default: () => new Bug()
+    }
+  },
+  setup(props) {
     const editable = ref({})
+    watchEffect(() => {
+      editable.value = { ...props.bug }
+    })
     const route = useRoute()
     return {
       editable,
       async createBug() {
         try {
           if (editable.value.id) {
-            editable.value.bugId = route.params.bugId
+            await bugsService.editBug(editable.value)
+          } else {
             await bugsService.editBug(editable.value)
             editable.value = {}
-            Pop.toast('Bug Initialized', 'success')
-            const modal = Modal.getInstance(document.getElementById('bug-modal-' + route.params.bugId))
-            modal.hide()
-          } else {
-            const id = await bugsService.createBug(editable.value)
-            router.push({ name: 'Bug', params: { bugId: id } })
-            editable.value = {}
-            Pop.toast('Bug Initialized', 'success')
-            const modal = Modal.getInstance(document.getElementById('bug-modal'))
-            modal.hide()
           }
+          Pop.toast('Bug Initialized', 'success')
+          const modal = Modal.getInstance(document.getElementById('edit-modal'))
+          modal.hide()
         } catch (error) {
           Pop.toast(error.message, 'error')
           logger.error('creation error', error)

@@ -20,8 +20,9 @@ class BugsService {
   }
 
   async editBug(bug) {
-    const res = await api.put('api/bugs', bug)
-    AppState.bugs = new Bug(res.data)
+    const res = await api.put(`api/bugs/${bug.id}`, bug)
+    AppState.bug = new Bug(res.data)
+    return res.data.id
   }
 
   async deleteBug(bugId) {

@@ -1,5 +1,7 @@
 <template>
-  <BugCard v-for="b in filtered" :filtered="b" :key="b.id" />
+  <div class="component">
+    {{ bug.creator.id }}
+  </div>
 </template>
 
 <script>
@@ -9,9 +11,7 @@ export default {
   setup() {
     return {
       account: computed(() => AppState.account),
-      bugs: computed(() => AppState.bugs),
-      bug: computed(() => AppState.bug),
-      sort: computed(() => AppState.sort)
+      bugs: computed(() => AppState.bugs)
     }
   }
 }

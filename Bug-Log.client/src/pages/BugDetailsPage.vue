@@ -60,10 +60,23 @@
           <p>
             {{ bug.description }}
           </p>
+          <button type="button" class="btn btn-primary" @click.prevent="trackBug()">
+            Track
+          </button>
+          <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#edit-modal">
+            Edit
+          </button>
+          <button type="button" class="btn btn-primary m-2" @click="toggleStatus">
+            Close
+          </button>
+          <TrackedCard v-for="t in trackedbugs" :trackedbug="t" :key="t.id">
+          </trackedcard>
         </div>
       </div>
     </div>
-    <div class="col-6">
+    <div class="
+                  col-6"
+    >
       <div class="card">
         <h2 class="card-header">
           Notes
@@ -85,6 +98,14 @@
       <NoteForm :bug="bug" />
     </template>
   </Modal>
+  <Modal id="edit-modal">
+    <template #modal-title>
+      Edit Bug
+    </template>
+    <template #modal-body>
+      <EditBugForm :bug="bug" />
+    </template>
+  </Modal>
 </template>
 
 <script>
@@ -93,7 +114,9 @@ import { AppState } from '../AppState'
 import { useRoute } from 'vue-router'
 import { bugsService } from '../services/BugsService'
 import { notesService } from '../services/NotesService'
+import { trackedService } from '../services/TrackedService'
 import { logger } from '../utils/Logger'
+import Pop from '../utils/Pop'
 export default {
 
   setup() {
@@ -110,7 +133,14 @@ export default {
       bugs: computed(() => AppState.bugs),
       notes: computed(() => AppState.notes),
       note: computed(() => AppState.note),
-      account: computed(() => AppState.account)
+      account: computed(() => AppState.account),
+      async trackBug() {
+        try {
+          await trackedService.createTrackedBug()
+        } catch (error) {
+          Pop.toast(error.messag, 'error')
+        }
+      }
     }
   }
 }
