@@ -28,6 +28,7 @@ import { bugsService } from '../services/BugsService'
 import Pop from '../utils/Pop'
 import { logger } from '../utils/Logger'
 import { Modal } from 'bootstrap'
+import { router } from '../router'
 export default {
   setup() {
     const editable = ref({})
@@ -35,9 +36,14 @@ export default {
       editable,
       async createBug() {
         try {
-          await bugsService.createBug(editable.value)
+          if (editable.value.id) {
+            await bugsService.editBug(editable.value)
+          } else {
+            const id = await bugsService.createBug(editable.value)
+            router.push({ name: 'Bug', params: { bugId: id } })
+          }
           editable.value = {}
-          Pop.toast('Noice!', 'success')
+          Pop.toast('Bug Initialized', 'success')
           const modal = Modal.getInstance(document.getElementById('bug-modal'))
           modal.hide()
         } catch (error) {

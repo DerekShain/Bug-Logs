@@ -8,8 +8,8 @@ class NotesService {
     AppState.notes = res.data.map(b => new Note(b))
   }
 
-  async getNoteById(noteId) {
-    const res = await api.get(`api/notes/${noteId}`)
+  async getNoteById(bugId, noteId) {
+    const res = await api.get(`api/bugs/${bugId}/notes/${noteId}`)
     AppState.note = new Note(res.data)
   }
 
