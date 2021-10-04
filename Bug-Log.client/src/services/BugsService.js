@@ -26,8 +26,9 @@ class BugsService {
   }
 
   async deleteBug(bugId) {
-    await api.delete('api/bugs/' + bugId)
-    AppState.bugs = AppState.bugs.filter(b => b.id !== bugId)
+    const res = await api.delete('api/bugs/' + bugId)
+    AppState.bugs = new Bug(res.data)
+    return res.data.id
   }
 }
 export const bugsService = new BugsService()

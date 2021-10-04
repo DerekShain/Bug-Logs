@@ -3,7 +3,7 @@
     <div class="card-body">
       {{ note.body }}
       <div class="col-4">
-        <i v-if="account.id == note.creatorId" class="mdi mdi-delete-sweep text-dark selectable ps-3 f-18" aria-hidden="true" title="Delete Bug" @click="removeNote"></i>
+        <i v-if="account.id == note.creatorId && bug.closed === false" class="mdi mdi-delete-sweep text-dark selectable ps-3 f-18" aria-hidden="true" title="Delete Bug" @click="removeNote"></i>
       </div>
     </div>
   </div>
@@ -26,6 +26,7 @@ export default {
       account: computed(() => AppState.account),
       notes: computed(() => AppState.notes),
       bugs: computed(() => AppState.bugs),
+      bug: computed(() => AppState.bug),
       async removeNote() {
         try {
           const yes = await Pop.confirm('Are you sure?')

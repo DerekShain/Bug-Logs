@@ -60,13 +60,13 @@
           <p>
             {{ bug.description }}
           </p>
-          <button type="button" class="btn btn-primary" @click.prevent="trackBug()">
+          <button type="button" v-if="bug.closed === false" class="btn btn-primary" @click.prevent="trackBug()">
             Track
           </button>
-          <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#edit-modal">
+          <button v-if="account.id == bug.creatorId && bug.closed === false" type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#edit-modal">
             Edit
           </button>
-          <button type="button" class="btn btn-primary m-2" @click="toggleStatus">
+          <button v-if="account.id == bug.creatorId && bug.closed === false" type="button" class="btn btn-primary m-2" @click="toggleStatus()">
             Close
           </button>
           <TrackedCard v-for="t in trackedbugs" :trackedbug="t" :key="t.id">
@@ -81,7 +81,7 @@
         <h2 class="card-header">
           Notes
         </h2>
-        <button type="button" class="btn btn-primary m-1 text-center" data-bs-toggle="modal" :data-bs-target="'#note-modal-'+bug.id">
+        <button type="button" v-if="bug.closed === false" class="btn btn-primary m-1 text-center" data-bs-toggle="modal" :data-bs-target="'#note-modal-'+bug.id">
           Add Note
         </button>
         <div class="card-body">
@@ -117,6 +117,7 @@ import { notesService } from '../services/NotesService'
 import { trackedService } from '../services/TrackedService'
 import { logger } from '../utils/Logger'
 import Pop from '../utils/Pop'
+import { router } from '../router'
 export default {
 
   setup() {
@@ -137,8 +138,17 @@ export default {
       async trackBug() {
         try {
           await trackedService.createTrackedBug()
+          Pop.toast('Closed!')
         } catch (error) {
-          Pop.toast(error.messag, 'error')
+          Pop.toast(error.message, 'error')
+        }
+      },
+      async toggleStatus() {
+        try {
+          await bugsService.deleteBug(route.params.bugId, closed)
+          Pop.toast('Closed!')
+        } catch (error) {
+          Pop.toast(error.message, 'error')
         }
       }
     }
