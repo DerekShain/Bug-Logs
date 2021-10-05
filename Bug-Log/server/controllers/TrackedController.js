@@ -8,7 +8,7 @@ export class TrackedController extends BaseController {
     this.router
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createTracked)
-      .delete('/:trackedId', this.deleteTracked)
+      .delete('/:bugId', this.deleteTracked)
   }
 
   async createTracked(req, res, next) {
@@ -23,7 +23,8 @@ export class TrackedController extends BaseController {
 
   async deleteTracked(req, res, next) {
     try {
-      const tracked = await trackedService.deleteTrackedBug(req.userInfo.id, req.params.trackedId)
+      req.body.accountId = req.userInfo.id
+      const tracked = await trackedService.deleteTrackedBug(req.userInfo.id, req.params.bugId)
       res.send(tracked)
     } catch (error) {
       next(error)

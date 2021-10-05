@@ -60,17 +60,22 @@
           <p>
             {{ bug.description }}
           </p>
-          <button type="button" v-if="bug.closed === false" class="btn btn-primary" @click.prevent="trackBug()">
+          <button type="button" v-if="bug.closed === false" class="btn btn-primary m-2" @click="trackBug()">
             Track
+          </button>
+          <button type="button" v-if="bug.closed === false" class="btn btn-primary m-2" @click="unTrackBug()">
+            UnTrack
           </button>
           <button v-if="account.id == bug.creatorId && bug.closed === false" type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#edit-modal">
             Edit
           </button>
-          <button v-if="account.id == bug.creatorId && bug.closed === false" type="button" class="btn btn-primary m-2" @click="toggleStatus()">
+          <button v-if="account.id == bug.creatorId && bug.closed === false" type="button" class="btn btn-primary m-2" @click="toggleStatus(false)">
             Close
-          </button>
-          <TrackedCard v-for="t in trackedbugs" :trackedbug="t" :key="t.id">
-          </trackedcard>
+          </button><br />
+          <p>
+            Bug tracked by -
+            <TrackedCard v-for="u in trackers" :tracked-bug="u" :key="u.id" class="m-2" />
+          </p>
         </div>
       </div>
     </div>
@@ -90,7 +95,7 @@
       </div>
     </div>
   </div>
-  <Modal :id="'note-modal-'+bug.id">
+  <Modal :id="'note-modal-'+bug.id" class="text-light bg-dark">
     <template #modal-title>
       Create Note
     </template>
@@ -98,7 +103,7 @@
       <NoteForm :bug="bug" />
     </template>
   </Modal>
-  <Modal id="edit-modal">
+  <Modal id="edit-modal" class="text-light bg-dark">
     <template #modal-title>
       Edit Bug
     </template>
@@ -125,8 +130,8 @@ export default {
     onMounted(() => {
       if (route.params.bugId || route.params.noteId) {
         bugsService.getBugById(route.params.bugId)
-        // notesService.getNoteById(route.params.noteId)
         notesService.getNoteByBugId(route.params.bugId)
+        trackedService.getTrackersByBugId(route.params.bugId)
       }
     })
     return {
@@ -135,17 +140,30 @@ export default {
       notes: computed(() => AppState.notes),
       note: computed(() => AppState.note),
       account: computed(() => AppState.account),
+      trackers: computed(() => AppState.trackers),
       async trackBug() {
         try {
-          await trackedService.createTrackedBug()
-          Pop.toast('Closed!')
+          await trackedService.createTrackedBug(route.params.bugId)
+          Pop.toast('Bug is Tracked!')
         } catch (error) {
           Pop.toast(error.message, 'error')
         }
       },
-      async toggleStatus() {
+      async unTrackBug() {
         try {
-          await bugsService.deleteBug(route.params.bugId, closed)
+          for (let i = 0; i < AppState.trackers.length; i++) {
+            const element = AppState.trackers[i]
+            const trackedBug = AppState.trackers.filter(b => b.accountId !== element.accountId)
+            await trackedService.deleteTrackedBug(trackedBug[0].id)
+            Pop.toast('Closed!')
+          }
+        } catch (error) {
+          Pop.toast(error.message, 'error')
+        }
+      },
+      async toggleStatus(status) {
+        try {
+          await bugsService.deleteBug(route.params.bugId, status)
           Pop.toast('Closed!')
         } catch (error) {
           Pop.toast(error.message, 'error')

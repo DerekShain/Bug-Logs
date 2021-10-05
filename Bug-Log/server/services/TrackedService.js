@@ -2,19 +2,23 @@ import { dbContext } from '../db/DbContext'
 import { BadRequest, Forbidden } from '../utils/Errors'
 class TrackedService {
   async createTrackedBug(data) {
-    const tracked = await dbContext.TrackedBugs.find({ bugId: data.bugId }).populate('tracker').populate('bug')
-    if (tracked.length === 0) {
-      const trackBug = await dbContext.TrackedBugs.create(data)
-      await trackBug.populate('tracker')
-      await trackBug.populate('bug')
-      return trackBug
-    } else {
-      throw new BadRequest('Bug error')
+    const trackedBugs = await dbContext.TrackedBugs.find({ bugId: data.bugId }).populate('tracker').populate('bug')
+    for (let i = 0; i < trackedBugs.length; i++) {
+      const check = trackedBugs[i]
+      if (check.accountId.toString() === data.accountId) {
+        throw new BadRequest('can only track one time')
+      }
     }
+
+    const trackBug = await dbContext.TrackedBugs.create(data)
+    await trackBug.populate('tracker')
+    await trackBug.populate('bug')
+    return trackBug
   }
 
   async deleteTrackedBug(userId, trackedBugId) {
-    const bug = await dbContext.TrackedBugs.findById(trackedBugId)
+    const bug = await dbContext.TrackedBugs.findOne({ _id: trackedBugId }).populate('tracker').populate('bug')
+    const test = bug.accountId.toString()
     if (userId !== bug.accountId.toString()) {
       throw new Forbidden('not allowed')
     }

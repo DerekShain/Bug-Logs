@@ -1,6 +1,6 @@
 <template>
   <form @submit="createBug">
-    <input class="form-control" type="text" placeholder="Title" aria-label="default input example" v-model="editable.title"><br />
+    <input class="form-control text-dark" type="text" placeholder="Title" aria-label="default input example" v-model="editable.title"><br />
     <input class="form-control"
            type="number"
            placeholder="Priority"
@@ -12,7 +12,7 @@
     <textarea class="form-control" type="text" placeholder="Description" aria-label="default input example" v-model="editable.description">
       </textarea><br />
     <div class="form-group">
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <button type="button" class="btn btn-secondary m-2" data-bs-dismiss="modal">
         Close
       </button>
       <button type="submit" class="btn btn-primary">

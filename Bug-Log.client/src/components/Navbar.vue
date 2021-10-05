@@ -6,7 +6,7 @@
           alt="logo"
           src="../assets/img/bug-problem.png"
           height="45"
-        />
+        /> bugs.
       </div>
     </router-link>
     <button

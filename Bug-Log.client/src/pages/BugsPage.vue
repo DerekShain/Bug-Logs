@@ -62,9 +62,11 @@
         </div>
       </div>
 
-      <Modal id="bug-modal">
+      <Modal id="bug-modal" class="text-light bg-dark">
         <template #modal-title>
-          Create Bug
+          <h4>
+            Create Bug
+          </h4>
         </template>
         <template #modal-body>
           <BugForm />
@@ -82,6 +84,8 @@ import { logger } from '../utils/Logger'
 import { AppState } from '../AppState'
 
 import { notesService } from '../services/NotesService'
+import { trackedService } from '../services/TrackedService'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'Home',
@@ -89,9 +93,11 @@ export default {
   setup() {
     const high = ref(true)
     const low = ref(false)
+    const route = useRoute()
     onMounted(async() => {
       try {
         await bugsService.getBugs()
+        trackedService.getTrackersByBugId(route.params.bugId)
         // await notesService.getNotes()
       } catch (error) {
         Pop.toast(error, 'error')
@@ -119,6 +125,7 @@ export default {
       account: computed(() => AppState.account),
       bugs: computed(() => AppState.bugs.filter(lowFilter).sort(highfilter)),
       bug: computed(() => AppState.bug),
+      trackers: computed(() => AppState.trackers),
       filter(filter) {
         AppState.filter.status = filter
       }

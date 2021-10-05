@@ -3,7 +3,7 @@
     <textarea class="form-control" type="text" placeholder="Message..." aria-label="default input example" v-model="editable.body">
       </textarea><br />
     <div class="form-group">
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <button type="button" class="btn btn-secondary m-2" data-bs-dismiss="modal">
         Close
       </button>
       <button type="submit" class="btn btn-primary">
